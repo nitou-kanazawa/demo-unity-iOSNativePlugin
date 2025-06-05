@@ -5,50 +5,57 @@ using System.Threading.Tasks;
 
 namespace NativePlugin.Utils
 {
-    internal sealed class AsyncOperationHandle : AsyncOperationHandleBase
+    
+    /// <summary>
+    /// string 型結果を返す非同期ハンドル。
+    /// </summary>
+    internal sealed class StringAsyncOperationHandle : AsyncOperationHandleBase
     {
         #region Callback Delegates
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void OnSuccessCallback(
-            [MarshalAs(UnmanagedType.I4)] Int32 instanceId
+            [MarshalAs(UnmanagedType.I4)] int instanceId,
+            [MarshalAs(UnmanagedType.LPStr), In] string result
         );
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate void OnErrorCallback(
-            [MarshalAs(UnmanagedType.I4)] Int32 instanceId,
-            [MarshalAs(UnmanagedType.I4)] Int32 errorCode,
+            [MarshalAs(UnmanagedType.I4)] int instanceId,
+            [MarshalAs(UnmanagedType.I4)] int errorCode,
             [MarshalAs(UnmanagedType.LPStr), In] string errorMessage
         );
         #endregion
 
+        private readonly TaskCompletionSource<string> _tcs =
+            new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        private TaskCompletionSource<bool> _tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        /// <summary>
+        /// 完了時に返されるタスク
+        /// </summary>
+        public Task<string> Task => _tcs.Task;
 
-        public Task Task => _tcs.Task;
+        public StringAsyncOperationHandle(int id) : base(id) { }
 
-
-        /// ----------------------------------------------------------------------------
-
-        public AsyncOperationHandle(int id) : base(id) { }
-
+        /// <summary>
+        /// ネイティブ呼び出し用のコールバック関数ポインターを取得します。
+        /// </summary>
         internal (IntPtr successCallbackPtr, IntPtr errorCallbackPtr) GetCallbackPointers()
         {
             lock (_syncRoot)
             {
-                if (Status is not AsyncOperationStatus.Stop)
+                if (Status != AsyncOperationStatus.Stop)
                     throw new InvalidOperationException("Handle already started or completed.");
 
                 Status = AsyncOperationStatus.Running;
 
-                // Callback
-                _completionCallback = new OnSuccessCallback(StaticCompletionCallback);
-                _errorCallback = new OnErrorCallback(StaticFailedCallback);
+                _completionCallback = new OnSuccessCallback(StaticSuccessCallback);
+                _errorCallback      = new OnErrorCallback(StaticErrorCallback);
 
                 try
                 {
                     _completionCallbackHandle = GCHandle.Alloc(_completionCallback);
-                    _errorCallbackHandle = GCHandle.Alloc(_errorCallback);
+                    _errorCallbackHandle      = GCHandle.Alloc(_errorCallback);
 
                     var sPtr = Marshal.GetFunctionPointerForDelegate(_completionCallback);
                     var ePtr = Marshal.GetFunctionPointerForDelegate(_errorCallback);
@@ -62,24 +69,24 @@ namespace NativePlugin.Utils
             }
         }
 
-        private void SetCompletion()
+        private void SetSuccess(string result)
         {
-            lock (base._syncRoot)    
+            lock (_syncRoot)
             {
-                if (Status is AsyncOperationStatus.Running)
+                if (Status == AsyncOperationStatus.Running)
                 {
                     Status = AsyncOperationStatus.Succeeded;
-                    _tcs.TrySetResult(true);
+                    _tcs.TrySetResult(result);
                 }
                 Dispose();
             }
         }
 
-        private void SetException(int errorCode, string errorMessage)
+        private void SetError(int errorCode, string errorMessage)
         {
-            lock (base._syncRoot)
+            lock (_syncRoot)
             {
-                if (Status is AsyncOperationStatus.Running)
+                if (Status == AsyncOperationStatus.Running)
                 {
                     Status = AsyncOperationStatus.Failed;
                     OperationException = new InvalidOperationException(errorMessage);
@@ -91,7 +98,7 @@ namespace NativePlugin.Utils
 
         private void Cancel()
         {
-            lock (base._syncRoot)
+            lock (_syncRoot)
             {
                 if (Status.IsDone())
                     return;
@@ -103,35 +110,29 @@ namespace NativePlugin.Utils
             }
         }
 
-        /// ----------------------------------------------------------------------------
         #region Static
 
-        internal static AsyncOperationHandle CreateHandle()
+        internal static StringAsyncOperationHandle CreateHandle()
         {
-            return AsyncOperationHandleBase.CreateHandle<AsyncOperationHandle>();
+            return AsyncOperationHandleBase.CreateHandle<StringAsyncOperationHandle>();
         }
 
-        // [NOTE]
-        //  - Native code can only managed static method in AOT platform. (Can not instance method)
-        //  - MonoPInvoke attribute must be set
-
         [AOT.MonoPInvokeCallback(typeof(OnSuccessCallback))]
-        internal static void StaticCompletionCallback(int id)
+        private static void StaticSuccessCallback(int id, string result)
         {
-            var handle = GetHandle<AsyncOperationHandle>(id);
-            handle.SetCompletion();
+            var handle = GetHandle<StringAsyncOperationHandle>(id);
+            handle.SetSuccess(result);
         }
 
         [AOT.MonoPInvokeCallback(typeof(OnErrorCallback))]
-        internal static void StaticFailedCallback(int id, int errorCode, string errorMessage)
+        private static void StaticErrorCallback(int id, int errorCode, string errorMessage)
         {
-            var handle = GetHandle<AsyncOperationHandle>(id);
-            handle.SetException(errorCode, errorMessage);
+            var handle = GetHandle<StringAsyncOperationHandle>(id);
+            handle.SetError(errorCode, errorMessage);
         }
+
         #endregion
     }
-
-
     
-
+    
 }

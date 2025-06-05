@@ -1,0 +1,9 @@
+c:\Users\nat-itoh\Desktop\TinyRx\TinyRx\bin\Debug\netstandard2.1\TinyRx.deps.json
+c:\Users\nat-itoh\Desktop\TinyRx\TinyRx\bin\Debug\netstandard2.1\TinyRx.dll
+c:\Users\nat-itoh\Desktop\TinyRx\TinyRx\bin\Debug\netstandard2.1\TinyRx.pdb
+c:\Users\nat-itoh\Desktop\TinyRx\TinyRx\obj\Debug\netstandard2.1\TinyRx.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\nat-itoh\Desktop\TinyRx\TinyRx\obj\Debug\netstandard2.1\TinyRx.AssemblyInfoInputs.cache
+c:\Users\nat-itoh\Desktop\TinyRx\TinyRx\obj\Debug\netstandard2.1\TinyRx.AssemblyInfo.cs
+c:\Users\nat-itoh\Desktop\TinyRx\TinyRx\obj\Debug\netstandard2.1\TinyRx.csproj.CoreCompileInputs.cache
+c:\Users\nat-itoh\Desktop\TinyRx\TinyRx\obj\Debug\netstandard2.1\TinyRx.dll
+c:\Users\nat-itoh\Desktop\TinyRx\TinyRx\obj\Debug\netstandard2.1\TinyRx.pdb

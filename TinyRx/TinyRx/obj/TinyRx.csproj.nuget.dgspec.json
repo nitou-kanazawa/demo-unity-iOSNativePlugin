@@ -1,0 +1,68 @@
+{
+  "format": 1,
+  "restore": {
+    "c:\\Users\\nat-itoh\\Desktop\\TinyRx\\TinyRx\\TinyRx.csproj": {}
+  },
+  "projects": {
+    "c:\\Users\\nat-itoh\\Desktop\\TinyRx\\TinyRx\\TinyRx.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "c:\\Users\\nat-itoh\\Desktop\\TinyRx\\TinyRx\\TinyRx.csproj",
+        "projectName": "TinyRx",
+        "projectPath": "c:\\Users\\nat-itoh\\Desktop\\TinyRx\\TinyRx\\TinyRx.csproj",
+        "packagesPath": "C:\\Users\\nat-itoh\\.nuget\\packages\\",
+        "outputPath": "c:\\Users\\nat-itoh\\Desktop\\TinyRx\\TinyRx\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\nat-itoh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "targetAlias": "netstandard2.1",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "targetAlias": "netstandard2.1",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.407\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
